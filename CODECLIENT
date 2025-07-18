@@ -1,0 +1,41 @@
+#include <ESP8266WiFi.h>
+#include <Servo.h>
+
+// WiFi credentials
+char ssid[] = "esp8266";           // WiFi network name
+char pass[] = "9987654321";        // WiFi network password
+
+// WiFi server on port 80
+WiFiServer server(80);
+
+// Static IP configuration
+IPAddress ip(192, 168, 137, 12);       // Server IP address
+IPAddress gateway(192, 168, 0, 1);     // Gateway (router) address
+IPAddress subnet(255, 255, 255, 0);    // Subnet mask
+
+// Pins
+#define SERVO_PIN D11     // Servo control pin
+#define LED_PIN D10       // LED control pin
+
+Servo myServo;            // Create servo object
+
+void setup() {
+  Serial.begin(115200);
+
+  // Configure static IP
+  WiFi.config(ip, gateway, subnet);
+  WiFi.begin(ssid, pass);  // Connect to WiFi
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(5000);
+  }
+
+  Serial.println("Connecté au réseau WiFi");
+
+  server.begin();  // Start the server
+
+  pinMode(LED_PIN, OUTPUT);         // Set LED pin as output
+  myServo.attach(SERVO_PIN);        // Attach the servo to its pin
+}
